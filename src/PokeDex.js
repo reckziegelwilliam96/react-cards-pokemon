@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { v4 as uuid } from "uuid";
-import axios from "axios";
+import { useAxios } from "./hooks";
 import PokemonSelect from "./PokemonSelect";
 import PokemonCard from "./PokemonCard";
 import "./PokeDex.css";
@@ -8,14 +7,15 @@ import "./PokeDex.css";
 /* Renders a list of pokemon cards.
  * Can also add a new card at random,
  * or from a dropdown of available pokemon. */
-function PokeDex() {
-  const [pokemon, setPokemon] = useState([]);
-  const addPokemon = async name => {
-    const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${name}/`
-    );
-    setPokemon(pokemon => [...pokemon, { ...response.data, id: uuid() }]);
+function Pokedex() {
+  const [name, setName] = useState("");
+  const { data: pokemon, fetchData: fetchPokemon } = useAxios("https://pokeapi.co/api/v2/pokemon/", name);
+
+  const addPokemon = async (name) => {
+    setName(name);
+    await fetchPokemon();
   };
+
   return (
     <div className="PokeDex">
       <div className="PokeDex-buttons">
@@ -38,6 +38,6 @@ function PokeDex() {
       </div>
     </div>
   );
-}
+} // Add this closing curly brace
 
 export default PokeDex;
